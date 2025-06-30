@@ -2,13 +2,11 @@
     import { ref } from 'vue';
     import textInput from './components/TextInput.vue'
     import formButton from './components/FormButton.vue'
-    import isSuccessfulLoginAlert from './API/UsersController'
-    import clearForm from './API/FormController'
+    import {isSuccessfulLoginAlert} from './API/UsersController'
+    import clearForm from './shared/FormController'
     const username = ref("")
     const password = ref("")
 
-    const handleLogin = () => {isSuccessfulLoginAlert(username, password)}
-    const handleClear = () => {clearForm(username, password)}
 </script>
 
 <template>
@@ -20,8 +18,8 @@
       <textInput :title="`Password`" :inputType="'password'" v-model:inputValue="password"/>
       
       <div class="card-actions">
-        <formButton :button_func = "handleLogin" :text="'Login'"/>
-        <formButton :button_func = "handleClear" :text = "'Clear'"/>
+        <formButton :button_func = "() => isSuccessfulLoginAlert(username, password)" :text="'Login'"/>
+        <formButton :button_func = "() => clearForm(username, password)" :text = "'Clear'"/>
       </div>
 
     </div>

@@ -1,10 +1,20 @@
 <script setup>
-import Login  from './Login.vue';
+import { RouterLink } from 'vue-router';
+import Login from './Login.vue';
+import router from './router';
+
+const navTo = () => {
+  console.log('button pressed!')
+  router.push('/user-info')
+}
 </script>
 
 <template>
   <main>
-      <Login/>
+    <!-- <RouterView /> -->
+     <Login />
+    <RouterLink to = '/user-info'>button</RouterLink>
+    <!-- <button @click="navTo">Nav</button> -->
   </main>
 </template>
 

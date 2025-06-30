@@ -1,7 +1,7 @@
 
 const clearForm = (...args) => {
     args.forEach(arg => {
-        arg.value = ""
+        arg = ""
     })
 }
 
