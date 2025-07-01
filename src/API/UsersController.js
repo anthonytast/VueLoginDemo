@@ -1,21 +1,25 @@
 import usersData from "@/DB/LoginBackend"
 
 let username = ""
+let isLoggedIn = false
 
 // passing in strs
-const login = (username, password) => {
-    return ((username in usersData) && (usersData[username].password == password))
+const login = ({username, password}) => {
+    if ((username in usersData) && (usersData[username].password == password)) {
+        isLoggedIn = true
+    }
+    return isLoggedIn
 }
 
 // passing in strs
-export const isSuccessfulLoginAlert = (username, password) => {
-    if (login(username, password)) window.alert("Login Success!")
-    else window.alert("Login Failed :(")
-}
+// export const isSuccessfulLoginAlert = (username, password) => {
+//     if (login(username, password)) window.alert("Login Success!")
+//     else window.alert("Login Failed :(")
+// }
 
-export const loginPushToUserInfo = (router, username, password) => {
-    if (login(username, password)) {
-        router.push({path: '/user-info', query: {username: username, login: 'true'}})
+export const loginPushToUserInfo = ({router, username, password}) => {
+    if (login({username:username, password:password})) {
+        router.push({path: '/user-info', query: {username: username, login: isLoggedIn}})
     } else window.alert("Login Failed :(")
 }
 
