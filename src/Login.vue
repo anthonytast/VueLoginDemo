@@ -2,8 +2,12 @@
     import { ref } from 'vue';
     import textInput from './components/TextInput.vue'
     import formButton from './components/FormButton.vue'
-    import {isSuccessfulLoginAlert} from './API/UsersController'
+    // import {isSuccessfulLoginAlert} from './API/UsersController'
+    import {loginPushToUserInfo} from './API/UsersController'
     import clearForm from './shared/FormController'
+    import { useRoute, useRouter } from 'vue-router'
+    const router = useRouter()
+    const route = useRoute()
     const username = ref("")
     const password = ref("")
 
@@ -18,7 +22,7 @@
       <textInput :title="`Password`" :inputType="'password'" v-model:inputValue="password"/>
       
       <div class="card-actions">
-        <formButton :button_func = "() => isSuccessfulLoginAlert(username, password)" :text="'Login'"/>
+        <formButton :button_func = "() => loginPushToUserInfo(router, username, password)" :text="'Login'"/>
         <formButton :button_func = "() => clearForm(username, password)" :text = "'Clear'"/>
       </div>
 
