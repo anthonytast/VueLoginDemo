@@ -7,7 +7,7 @@
     import clearForm from './shared/FormController'
     import { useRoute, useRouter } from 'vue-router'
     const router = useRouter()
-    const route = useRoute()
+    const route = useRoute() // probably don't need to call this
     const username = ref("")
     const password = ref("")
 

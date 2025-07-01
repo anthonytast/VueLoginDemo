@@ -5,24 +5,23 @@
 // };
 
 
-const usersData = 
-{
+const usersData = {
     "luizsampaio" : {
-        firstname: 'Luiz',
-        lastname: 'Sampaio',
+        firstName: 'Luiz',
+        lastName: 'Sampaio',
         phoneNumber: '6412330921',
         password:'123'
     },
     "anthony" : {
-        firstname: 'Anthony',
+        firstName: 'Anthony',
         lastName: 'Tast',
-        phoneNumer: '7873218831293',
+        phoneNumber: '6319257508',
         password: '123'
     },
     "testuser" : {
-        firstname: 'Test',
+        firstName: 'Test',
         lastName: 'User',
-        phoneNumer: '1234567890',
+        phoneNumber: '1234567890',
         password: '123'
     }
 }

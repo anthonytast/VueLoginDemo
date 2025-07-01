@@ -8,7 +8,8 @@
     const usersData = getUsersData(username)
     const isLoggedIn = route.query.login ?? ''
 
-    console.log('username on users page: ',route.query)
+    console.log('username on users page: ', route.query)
+    console.log('usersData:', usersData)
 
     // const usersData = {
     //     firstname: "Anthony",
@@ -22,11 +23,11 @@
         <!-- <template v-if="username && isLoggedIn"> -->
         <h1>{{ username }}</h1>
         <br>
-        <p>{{ usersData.firstname }}</p>
+        <p>{{ usersData.firstName }}</p>
         <br>
-        <p>{{ usersData.lastname }}</p>
+        <p>{{ usersData.lastName }}</p>
         <br>
-        <p>{{ usersData.phonenumber }}</p>
+        <p>{{ usersData.phoneNumber }}</p>
     </template>
  <template v-else>
     <h1>No user found!</h1>
