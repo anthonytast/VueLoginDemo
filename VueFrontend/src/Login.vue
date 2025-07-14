@@ -22,7 +22,7 @@
       <textInput :title="`Password`" :inputType="'password'" v-model:inputValue="password"/>
       
       <div class="card-actions">
-        <formButton :button_func = "() => loginPushToUserInfo(router, username, password)" :text="'Login'"/>
+        <formButton :button_func = "() => loginPushToUserInfo({router:router, username:username, password:password})" :text="'Login'"/>
         <formButton :button_func = "() => clearForm(username, password)" :text = "'Clear'"/>
       </div>
 
