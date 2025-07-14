@@ -12,19 +12,19 @@ class UserDB():
         self.phone_number = phone_number
         self.password = password
 
-users = [
-    UserDB(
+users = {
+    "anthonytast": UserDB(
         username="anthonytast",
         first_name="Anthony",
         last_name="Tast",
         phone_number="631-925-7508",
         password="SuperSecretPW"
     ),
-    UserDB(
+    "testuser": UserDB(
         username="testuser",
         first_name="Dev",
         last_name="Tester",
         phone_number="1-800",
         password="test"
     )
-]
+}

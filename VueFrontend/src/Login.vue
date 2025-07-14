@@ -5,11 +5,10 @@
     // import {isSuccessfulLoginAlert} from './API/UsersController'
     import {loginPushToUserInfo} from './API/UsersController'
     import clearForm from './shared/FormController'
-    import { useRoute, useRouter } from 'vue-router'
-    const router = useRouter()
-    const route = useRoute() // probably don't need to call this
-    const username = ref("")
-    const password = ref("")
+    import { useRouter } from 'vue-router'
+    const router = useRouter();
+    const username = ref("");
+    const password = ref("");
 
 </script>
 

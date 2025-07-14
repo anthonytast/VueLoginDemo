@@ -21,13 +21,17 @@ not allow a get all users endpoint (for security reasons)
 '''
 @router.get("/")
 def get_all_users(limit: int = 25) -> list[User]: # Using the BaseModel class so password doesn't show
-    return users[0:limit]
+    filter_users = {
+        user_id: {"name": info["name"]} for user_id, info in users.items()
+    }
+    return users
 
 # COULD MAKE THIS FUNCTION MORE EFFICIENT LATER (CONSIDER CASE WITH MORE USERS)
 # Could enhance this later for security
-@router.get("/login")
+@router.post("/login")
 def is_user_login_successful(username: str, password: str):
-    for user in users:
+    for key in users.keys:
+        user = users[key]
         if user.username == username:
             if user.password == password:
                 return {"login": True}
@@ -43,8 +47,8 @@ def create_user(username: str, first_name: str, last_name: str, phone_number: st
             phone_number=phone_number,
             password=password
         )
-    users.append(new_user)
-    return new_user
+    users[username] =  new_user
+    return {username: new_user}
 
 @router.get("/{username}")
 def get_user_by_username(username: str) -> User:

@@ -1,26 +1,25 @@
 <script setup>
-    import { useRoute, useRouter } from 'vue-router'
-    // import usersData from './DB/LoginBackend'
-    const router = useRouter()
-    const route = useRoute()
+    import {ref, onMounted} from 'vue';
     import {getUsersData} from './API/UsersController'
-    const username = route.query.username ?? ''
-    const usersData = getUsersData(username)
-    const isLoggedIn = route.query.login ?? ''
+    const username = localStorage.getItem('username')
+    const usersData = ref(null)
+    const isLoggedIn = localStorage.getItem('login')
 
-    console.log('username on users page: ', route.query)
+    // console.log('username on users page: ', route.query)
     console.log('usersData:', usersData)
 
-    // const usersData = {
-    //     firstname: "Anthony",
-    //     lastname: "Tast",
-    //     phonenumber: "6319257508",
-    // }
+    const isWaiting = ref(true)
+    onMounted(async () => {
+        usersData.value = await getUsersData(username);
+        isWaiting.value = false
+        console.log('usersData:', usersData.value);
+    });
+
 </script>
 
 <!-- NEXT STEPS IS TO TAKE INTO ACCOUNT SECURITY ASPECTS -->
 <template>
-    <template v-if="username && (isLoggedIn === 'true')">
+    <template v-if="!isWaiting">
         <!-- <template v-if="username && isLoggedIn"> -->
         <h1>{{ username }}</h1>
         <br>
@@ -31,6 +30,6 @@
         <p>{{ usersData.phone_number }}</p>
     </template>
  <template v-else>
-    <h1>No user found!</h1>
+    <h1>Loading User...</h1>
  </template>
 </template>
