@@ -18,16 +18,17 @@
     // }
 </script>
 
+<!-- NEXT STEPS IS TO TAKE INTO ACCOUNT SECURITY ASPECTS -->
 <template>
     <template v-if="username && (isLoggedIn === 'true')">
         <!-- <template v-if="username && isLoggedIn"> -->
         <h1>{{ username }}</h1>
         <br>
-        <p>{{ usersData.firstName }}</p>
+        <p>{{ usersData.first_name }}</p>
         <br>
-        <p>{{ usersData.lastName }}</p>
+        <p>{{ usersData.last_name }}</p>
         <br>
-        <p>{{ usersData.phoneNumber }}</p>
+        <p>{{ usersData.phone_number }}</p>
     </template>
  <template v-else>
     <h1>No user found!</h1>
