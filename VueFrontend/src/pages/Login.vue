@@ -1,14 +1,19 @@
 <script setup>
-    import { ref } from 'vue';
-    import textInput from './components/TextInput.vue'
-    import formButton from './components/FormButton.vue'
-    // import {isSuccessfulLoginAlert} from './API/UsersController'
-    import {loginPushToUserInfo} from '../controllers/usersController'
-    import clearForm from '../controllers/formController'
-    import { useRouter } from 'vue-router'
-    const router = useRouter();
-    const username = ref("");
-    const password = ref("");
+  import { ref } from 'vue';
+  import textInput from '@/components/TextInput.vue'
+  import formButton from '@/components/FormButton.vue'
+  import { login } from '@/controllers/usersController'
+  import { clearForm } from '@/controllers/formController'
+  import { useRouter } from 'vue-router'
+  const router = useRouter();
+  const username = ref("");
+  const password = ref("");
+
+  const loginPush = (username, password) => {
+    if (login(username, password)) { // pinia store will be checked on UserInfo page, not here
+      router.push({path: '/user-info'})
+    } else window.alert("Login Failed :(")
+  }
 
 </script>
 
@@ -21,7 +26,7 @@
       <textInput :title="`Password`" :inputType="'password'" v-model:inputValue="password"/>
       
       <div class="card-actions">
-        <formButton :button_func = "() => loginPushToUserInfo({router:router, username:username, password:password})" :text="'Login'"/>
+        <formButton :button_func = "() => loginPush(username, password)" :text="'Login'"/>
         <formButton :button_func = "() => clearForm(username, password)" :text = "'Clear'"/>
       </div>
 

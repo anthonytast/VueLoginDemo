@@ -1,8 +1,5 @@
-
-const clearForm = (...args) => {
+export const clearForm = (...args) => {
     args.forEach(arg => {
         arg = ""
     })
 }
-
-export default clearForm;

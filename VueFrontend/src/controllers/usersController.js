@@ -1,48 +1,15 @@
-/*
-import usersData from "@/DB/LoginBackend"
-
-let username = ""
-
-// passing in strs
-const login = (username, password) => {
-    return ((username in usersData) && (usersData[username].password == password))
-}
-
-// passing in strs
-export const isSuccessfulLoginAlert = (username, password) => {
-    if (login(username, password)) window.alert("Login Success!")
-    else window.alert("Login Failed :(")
-}
-
-export const loginPushToUserInfo = (router, username, password) => {
-    if (login(username, password)) {
-        router.push({path: '/user-info', query: {username: username, login: 'true'}})
-    } else window.alert("Login Failed :(")
-}
-
-export const getUsersData = (username) => {
-    //return userData[username] ? userData[usernane] : {}
-    // if (usersData[username]) return usersData[username]
-    // else return {}
-    // else return 'No user data Available'
-    return usersData[username]
-}
-// export default {getUsersData, isSuccessfulLoginAlert}
-
-/*
-CAN LATER ADD toRefs() on these methods
-*/
-
 import api from './api.js';
+import { useLoginStore } from '@/stores/auth'
 
-const login = async (username, password) => {
+export const login = async (username, password) => {
     // return ((username in usersData) && (usersData[username].password == password))
     try {
-        const response = await api.get(`/users/login?username=${username}&password=${password}`)
-        console.log("login response:", response)
-        console.log("login value", response.data.login)
+        const response = await api.post(`/users/login?username=${username}&password=${password}`)
         console.assert(response.status == 200)
-        // console.log("login response status code:", response.status)
+        // console.log("login response:", response)
+        // console.log("login value", response.data.login)
+        const authStore = useLoginStore()
+        authStore.successfulLogin(username)
         return response.data.login
     } catch (error) {
         console.error("Login API Error")
@@ -60,13 +27,11 @@ export const getUsersData = async (username) => {
     }
 }
 
-export const loginPushToUserInfo = async ({router, username, password}) => {// seperate concerns V and M
-    const loginSuccess = await login(username, password);
-    if (loginSuccess) {
-        localStorage.setItem('username', username)
-        localStorage.setItem('login', true)
-        router.push({path: '/user-info'}) // , query: {username: username, login: 'true'}})
-    } else window.alert("Login Failed :(")
-}
+// export const loginSaveInfo = async ({username, password}) => { // seperate concerns V and M
+//     const loginSuccess = await login(username, password);
+//     if (loginSuccess) {
+//         loginStore.loginSuccess(username)
+//     } else 
+// }
 
 // Needs to be async if making asynchronous api calls

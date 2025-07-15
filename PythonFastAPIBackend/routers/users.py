@@ -30,7 +30,7 @@ def get_all_users(limit: int = 25): # Using the BaseModel class so password does
             "username": user.username,
             "first_name": user.first_name
         }
-        for user_id, user in list(users.items())[:limit]
+        for _, user in list(users.items())[:limit]
     ]
     return filtered_users
 
