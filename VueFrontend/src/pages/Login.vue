@@ -9,8 +9,9 @@
   const username = ref("");
   const password = ref("");
 
-  const loginPush = (username, password) => {
-    if (login(username, password)) { // pinia store will be checked on UserInfo page, not here
+  const loginPush = async (username, password) => {
+    const isSuccessfulLogin = await login(username, password)
+    if (isSuccessfulLogin) { // pinia store will be checked on UserInfo page, not here
       router.push({path: '/user-info'})
     } else window.alert("Login Failed :(")
   }
