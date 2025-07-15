@@ -3,8 +3,8 @@
     import textInput from './components/TextInput.vue'
     import formButton from './components/FormButton.vue'
     // import {isSuccessfulLoginAlert} from './API/UsersController'
-    import {loginPushToUserInfo} from './API/UsersController'
-    import clearForm from './shared/FormController'
+    import {loginPushToUserInfo} from '../controllers/usersController'
+    import clearForm from '../controllers/formController'
     import { useRouter } from 'vue-router'
     const router = useRouter();
     const username = ref("");

@@ -1,6 +1,6 @@
 <script setup>
     import {ref, onMounted} from 'vue';
-    import {getUsersData} from './API/UsersController'
+    import {getUsersData} from '../controllers/usersController'
     const username = localStorage.getItem('username')
     const usersData = ref(null)
     const isLoggedIn = localStorage.getItem('login')

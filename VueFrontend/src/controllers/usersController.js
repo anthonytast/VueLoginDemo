@@ -33,7 +33,7 @@ export const getUsersData = (username) => {
 CAN LATER ADD toRefs() on these methods
 */
 
-import api from '../api.js';
+import api from './api.js';
 
 const login = async (username, password) => {
     // return ((username in usersData) && (usersData[username].password == password))
