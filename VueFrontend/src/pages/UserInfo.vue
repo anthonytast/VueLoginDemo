@@ -3,6 +3,7 @@
     import { getUsersData } from '@/controllers/usersController'
     import { useLoginStore } from '@/stores/auth'
     import { storeToRefs } from 'pinia'
+    import PatchableText from '@/components/PatchableText.vue';
     import formButton from '@/components/FormButton.vue'
     import router from '@/router';
     const usersData = ref(null)
@@ -23,6 +24,7 @@
     }
 
     const isWaiting = ref(true)
+    const isEditing = ref(false)
 
     onMounted(async () => {
         usersData.value = await getUsersData(username.value);
@@ -39,9 +41,10 @@
         <!-- <template v-if="username && isLoggedIn"> -->
             <h1>{{ username }}</h1>
             <br>
-            
+            <PatchableText :usersData="usersData" v-bind:isEditing="isEditing"/>
             <br>
             <div class="card-actions">
+                <formButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>
                 <formButton :button_func = "() => logout()" :text="'Logout'"/>
             </div>
         </template>
