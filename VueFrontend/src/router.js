@@ -2,10 +2,12 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 import Login  from './pages/Login.vue';
 import UserInfo from './pages/UserInfo.vue';
+import { getUsersData } from '@/controllers/usersController'
+import { useLoginStore } from '@/stores/auth'
 
 const routes = [
   { path: '/', component: Login },
-  { path: '/user-info', component: UserInfo },
+  { path: '/user-info', component: UserInfo, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
@@ -13,12 +15,26 @@ const router = createRouter({
   routes,
 })
 
-export default router
 
-/*
-createWebHistory uses the browser's HTML5 History API, 
-which updates the URL in the address bar and allows natural 
-browser navigation (back/forward). In contrast, createMemoryHistory 
-keeps the navigation history in memory without altering the URL, 
-making it more suitable for non-browser environments or testing.
-*/
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+  if (!requiresAuth) return next()
+
+  const token = localStorage.getItem('token')
+  if (!token) {
+    return next('/')
+  }
+
+  const user = await getUsersData()
+  if (!user) {
+    localStorage.clear()
+    return next('/login')
+  }
+
+  const authStore = useLoginStore()
+  authStore.successfulLogin(user.username)
+  return next()
+})
+
+export default router

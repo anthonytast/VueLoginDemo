@@ -2,30 +2,37 @@ import api from './api.js';
 import { useLoginStore } from '@/stores/auth'
 
 export const login = async (username, password) => {
-    // return ((username in usersData) && (usersData[username].password == password))
     try {
-        const response = await api.post(`/users/login?username=${username}&password=${password}`)
-        console.assert(response.status == 200)
-        // console.log("login response:", response)
-        // console.log("login value", response.data.login)
-        const authStore = useLoginStore()
-        authStore.successfulLogin(username)
-        return response.data.login
+        const response = await api.post('/users/token', null, {
+            params: { username, password }
+        });
+
+        const { access_token } = response.data;
+        if (!access_token) throw new Error("No token received");
+
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("username", username);
+
+        const authStore = useLoginStore();
+        authStore.successfulLogin(username);
+
+        return true;
     } catch (error) {
-        console.error("Login API Error")
-        return false
+        console.error("Login failed:", error);
+        return false;
     }
 }
 
-export const getUsersData = async (username) => {
+export const getUsersData = async () => {
     try {
-        const response = await api.get(`/users/${username}`);
-        console.log("user data response:", response.data)
-        return response.data
+        const response = await api.get('/users/verify');
+        return response.data;
     } catch (error) {
-        console.error("Could not get user data")
+        console.error("Token invalid or expired", error);
+        return null;
     }
 }
+
 
 // export const loginSaveInfo = async ({username, password}) => { // seperate concerns V and M
 //     const loginSuccess = await login(username, password);
