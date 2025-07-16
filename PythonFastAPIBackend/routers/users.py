@@ -64,6 +64,7 @@ def is_user_login_successful(username: str, password: str):
     else:
         return {"login": False}
 
+
 @router.post("/token", response_model=Token)
 def jwt_token_from_successful_login(username: str, password: str):
     user = users.get(username)
@@ -73,12 +74,14 @@ def jwt_token_from_successful_login(username: str, password: str):
     token = create_access_token({"sub": username})
     return {"access_token": token, "token_type": "bearer"}
 
+
 @router.get("/verify", response_model=User)
 def verify_user(token: str = Depends(oauth2_scheme)):
     user = verify_token(token)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
     return User(**user.__dict__)
+
 
 @router.post("/")
 def create_user(username: str, first_name: str, last_name: str, phone_number: str, password: str):
@@ -92,15 +95,17 @@ def create_user(username: str, first_name: str, last_name: str, phone_number: st
     users[username] =  new_user
     return {username: new_user}
 
-@router.get("/{username}")
-def get_user_info_by_username(username: str):
-    user = users[username]
-    if user != None:
-        return User(**user.__dict__)
-    else:
-        raise HTTPException(status_code=404, detail=f"User {username} not found")
 
-@router.patch("/{username}")
+# @router.get("/{username}")
+# def get_user_info_by_username(username: str):
+#     user = users[username]
+#     if user != None:
+#         return User(**user.__dict__)
+#     else:
+#         raise HTTPException(status_code=404, detail=f"User {username} not found")
+
+
+@router.patch("/{username}", response_model=User)
 def patch_user_by_username(username: str, first_name: str, last_name: str, phone_number: str) -> User:
     user = users[username]
     if user != None:
@@ -111,13 +116,26 @@ def patch_user_by_username(username: str, first_name: str, last_name: str, phone
     else:
         raise HTTPException(status_code=404, detail=f"User {username} not found")
 
-@router.patch("/{username}") # COULD MAKE THIS FUNCTION MORE EFFICIENT LATER (CONSIDER CASE WITH MORE USERS)
+
+@router.patch("/{username}")
 def update_username_password(username: str, password: str, new_password: str):
     user = users[username]
     if (user != None) and (user.password == password):
         user.password = new_password
     else:
         raise HTTPException(status_code=401, detail=f"Incorrect username and password")
+
+
+@router.patch("/{username}")
+def update_user_attributes(username: str, first_name: str, last_name: str, phone_number: str):
+    user = users[username]
+    if user:
+    # if (user != None) and (user.password == password):
+        user.first_name = first_name
+        user.last_name = last_name
+        user.phone_number = phone_number
+    else:
+        raise HTTPException(status_code=401, detail=f"Invalid user")
 
 
 @router.delete("/{username}")

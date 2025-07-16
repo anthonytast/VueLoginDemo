@@ -33,12 +33,13 @@ export const getUsersData = async () => {
     }
 }
 
-
-// export const loginSaveInfo = async ({username, password}) => { // seperate concerns V and M
-//     const loginSuccess = await login(username, password);
-//     if (loginSuccess) {
-//         loginStore.loginSuccess(username)
-//     } else 
-// }
-
-// Needs to be async if making asynchronous api calls
+export const patchUsersData = async (username, first_name, last_name, phone_number) => {
+    try {
+        // should add an additional verification here maybe
+        const response = await api.patch(`/users/${username}`, params={'username':username, 'first_name':first_name, 'last_name':last_name, 'phone_number':phone_number});
+        return response.data;
+    } catch (error) {
+        console.error("Token invalid or expired", error);
+        return null;
+    }
+}

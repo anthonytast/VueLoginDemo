@@ -39,11 +39,7 @@
         <!-- <template v-if="username && isLoggedIn"> -->
             <h1>{{ username }}</h1>
             <br>
-            <p>{{ usersData.first_name }}</p>
-            <br>
-            <p>{{ usersData.last_name }}</p>
-            <br>
-            <p>{{ usersData.phone_number }}</p>
+            
             <br>
             <div class="card-actions">
                 <formButton :button_func = "() => logout()" :text="'Logout'"/>
