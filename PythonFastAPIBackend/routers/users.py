@@ -96,15 +96,6 @@ def create_user(username: str, first_name: str, last_name: str, phone_number: st
     return {username: new_user}
 
 
-# @router.get("/{username}")
-# def get_user_info_by_username(username: str):
-#     user = users[username]
-#     if user != None:
-#         return User(**user.__dict__)
-#     else:
-#         raise HTTPException(status_code=404, detail=f"User {username} not found")
-
-
 @router.patch("/{username}", response_model=User)
 def patch_user_by_username(updatedUser: User) -> User:
     user = users[updatedUser.username]
@@ -114,16 +105,7 @@ def patch_user_by_username(updatedUser: User) -> User:
         user.phone_number = updatedUser.phone_number
         return user
     else:
-        raise HTTPException(status_code=404, detail=f"User {username} not found")
-
-
-# @router.patch("/{username}")
-# def update_username_password(username: str, password: str, new_password: str):
-#     user = users[username]
-#     if (user != None) and (user.password == password):
-#         user.password = new_password
-#     else:
-#         raise HTTPException(status_code=401, detail=f"Incorrect username and password")
+        raise HTTPException(status_code=404, detail=f"User {updatedUser.username} not found")
 
 
 @router.patch("/{username}")
@@ -139,9 +121,9 @@ def update_user_attributes(username: str, first_name: str, last_name: str, phone
 
 
 @router.delete("/{username}")
-def delete_user_by_username(username: str, password: str) -> User:
+def delete_user_by_username(username: str) -> User:
     user = users[username]
-    if (user != None) and (user.password == password):
+    if (user != None):# and (user.password == password):
         del_user = users.pop(username)
         return del_user
     else:

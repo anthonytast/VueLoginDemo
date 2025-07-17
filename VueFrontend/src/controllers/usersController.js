@@ -49,3 +49,12 @@ export const patchUsersData = async (username, first_name, last_name, phone_numb
         return null;
     }
 }
+
+export const deleteUser = async (username) => {
+    try {
+        const response = await api.delete(`/users/${username}`, {username})
+    } catch (error) {
+        console.error("Token invalid or expired", error);
+        return null;
+    }
+}

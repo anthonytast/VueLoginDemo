@@ -1,6 +1,7 @@
 <script setup>
     import {ref, onMounted} from 'vue';
     import { getUsersData } from '@/controllers/usersController'
+    import { deleteUser } from '@/controllers/usersController'
     import { useLoginStore } from '@/stores/auth'
     import { storeToRefs } from 'pinia'
     import PatchableText from '@/components/PatchableText.vue';
@@ -17,8 +18,16 @@
     const logout = () => {
         localStorage.removeItem('token')
         localStorage.removeItem('username')
+        auth.logoutUser()
+        router.push("/")
+    }
+
+    const del = async (un) => {
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
 
         auth.logoutUser()
+        await deleteUser(un)
 
         router.push("/")
     }
@@ -46,6 +55,7 @@
             <div class="card-actions">
                 <formButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>
                 <formButton :button_func = "() => logout()" :text="'Logout'"/>
+                <formButton :button_func = "() => del(username)" :text="'Delete User'"/>
             </div>
         </template>
         <template v-else>
