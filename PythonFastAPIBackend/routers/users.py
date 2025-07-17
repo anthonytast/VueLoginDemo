@@ -108,18 +108,6 @@ def patch_user_by_username(updatedUser: User) -> User:
         raise HTTPException(status_code=404, detail=f"User {updatedUser.username} not found")
 
 
-@router.patch("/{username}")
-def update_user_attributes(username: str, first_name: str, last_name: str, phone_number: str):
-    user = users[username]
-    if user:
-    # if (user != None) and (user.password == password):
-        user.first_name = first_name
-        user.last_name = last_name
-        user.phone_number = phone_number
-    else:
-        raise HTTPException(status_code=401, detail=f"Invalid user")
-
-
 @router.delete("/{username}")
 def delete_user_by_username(username: str) -> User:
     user = users[username]
