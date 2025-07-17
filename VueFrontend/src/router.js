@@ -2,12 +2,14 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 import Login  from './pages/Login.vue';
 import UserInfo from './pages/UserInfo.vue';
+import CreateUser from './pages/CreateUser.vue';
 import { getUsersData } from '@/controllers/usersController'
 import { useLoginStore } from '@/stores/auth'
 
 const routes = [
-  { path: '/', component: Login },
+  { path: '/', component: Login, meta: { requiresAuth: false }  },
   { path: '/user-info', component: UserInfo, meta: { requiresAuth: true } },
+  { path: '/sign-up', component: CreateUser, meta: { requiresAuth: false } },
 ]
 
 const router = createRouter({
@@ -29,7 +31,7 @@ router.beforeEach(async (to, from, next) => {
   const user = await getUsersData()
   if (!user) {
     localStorage.clear()
-    return next('/login')
+    return next('/')
   }
 
   const authStore = useLoginStore()

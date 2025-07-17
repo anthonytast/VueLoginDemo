@@ -52,9 +52,26 @@ export const patchUsersData = async (username, first_name, last_name, phone_numb
 
 export const deleteUser = async (username) => {
     try {
-        const response = await api.delete(`/users/${username}`, {username})
+        const response = await api.delete(`/users/${username}`, {username});
+        return response.data;
     } catch (error) {
         console.error("Token invalid or expired", error);
+        return null;
+    }
+}
+
+export const createUser = async (username, first_name, last_name, phone_number, password) => {
+    try {
+        const response = await api.post(`/users/`, {
+            username,
+            first_name,
+            last_name,
+            phone_number,
+            password
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Create Account issue", error);
         return null;
     }
 }

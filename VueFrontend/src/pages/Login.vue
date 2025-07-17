@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue';
-  import textInput from '@/components/TextInput.vue'
-  import formButton from '@/components/FormButton.vue'
+  import TextInput from '@/components/TextInput.vue'
+  import FormButton from '@/components/FormButton.vue'
   import { login } from '@/controllers/usersController'
   import { clearForm } from '@/controllers/formController'
   import { useRouter } from 'vue-router'
@@ -23,12 +23,13 @@
     <div>
       <h2>Login to Your Account</h2>
 
-      <textInput :title="`Username`" :inputType="'text'" v-model:inputValue="username"/> <!-- Can use v-model:inputValue instead of v-model because our changing value is not title the default: modelValue-->
-      <textInput :title="`Password`" :inputType="'password'" v-model:inputValue="password"/>
+      <TextInput :title="`Username`" :inputType="'text'" v-model:inputValue="username"/> <!-- Can use v-model:inputValue instead of v-model because our changing value is not title the default: modelValue-->
+      <TextInput :title="`Password`" :inputType="'password'" v-model:inputValue="password"/>
       
       <div class="card-actions">
-        <formButton :button_func = "() => loginPush(username, password)" :text="'Login'"/>
-        <formButton :button_func = "() => clearForm(username, password)" :text = "'Clear'"/>
+        <FormButton :button_func = "() => loginPush(username, password)" :text="'Login'"/>
+        <FormButton :button_func = "() => clearForm(username, password)" :text = "'Clear'"/>
+        <FormButton :button_func = "() => router.push('/sign-up')" :text = "'Sign Up'"/>
       </div>
 
     </div>

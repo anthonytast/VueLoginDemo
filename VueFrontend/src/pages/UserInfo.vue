@@ -5,7 +5,7 @@
     import { useLoginStore } from '@/stores/auth'
     import { storeToRefs } from 'pinia'
     import PatchableText from '@/components/PatchableText.vue';
-    import formButton from '@/components/FormButton.vue'
+    import FormButton from '@/components/FormButton.vue'
     import router from '@/router';
     const usersData = ref(null)
 
@@ -53,9 +53,9 @@
             <PatchableText :usersData="usersData" v-bind:isEditing="isEditing"/>
             <br>
             <div class="card-actions">
-                <formButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>
-                <formButton :button_func = "() => logout()" :text="'Logout'"/>
-                <formButton :button_func = "() => del(username)" :text="'Delete User'"/>
+                <FormButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>
+                <FormButton :button_func = "() => logout()" :text="'Logout'"/>
+                <FormButton :button_func = "() => del(username)" :text="'Delete User'"/>
             </div>
         </template>
         <template v-else>

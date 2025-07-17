@@ -23,6 +23,13 @@ class User(BaseModel):
     last_name: str
     phone_number: str
 
+class UserCreate(BaseModel):
+    username: str
+    first_name: str
+    last_name: str
+    phone_number: str
+    password: str
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -84,16 +91,19 @@ def verify_user(token: str = Depends(oauth2_scheme)):
 
 
 @router.post("/")
-def create_user(username: str, first_name: str, last_name: str, phone_number: str, password: str):
-    new_user = UserDB(
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            phone_number=phone_number,
-            password=password
-        )
-    users[username] =  new_user
-    return {username: new_user}
+def create_user(user: UserCreate):
+    if user.username not in users:
+        new_user = UserDB(
+                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                phone_number=user.phone_number,
+                password=user.password
+            )
+        users[user.username] = new_user
+        return {user.username: new_user}
+    else:
+        raise HTTPException(status_code=400, detail=f"Username {user.username} is taken")
 
 
 @router.patch("/{username}", response_model=User)
@@ -108,7 +118,7 @@ def patch_user_by_username(updatedUser: User) -> User:
         raise HTTPException(status_code=404, detail=f"User {updatedUser.username} not found")
 
 
-@router.delete("/{username}")
+@router.delete("/{username}", response_model=User)
 def delete_user_by_username(username: str) -> User:
     user = users[username]
     if (user != None):# and (user.password == password):
