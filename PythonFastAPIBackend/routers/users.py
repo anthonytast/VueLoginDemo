@@ -63,15 +63,6 @@ def get_all_users(limit: int = 25): # Using the BaseModel class so password does
     return filtered_users
 
 
-@router.post("/login")
-def is_user_login_successful(username: str, password: str):
-    user = users[username]
-    if (user != None) and (password == user.password):
-        return {"login": True}
-    else:
-        return {"login": False}
-
-
 @router.post("/token", response_model=Token)
 def jwt_token_from_successful_login(username: str, password: str):
     user = users.get(username)
@@ -121,7 +112,7 @@ def patch_user_by_username(updatedUser: User) -> User:
 @router.delete("/{username}", response_model=User)
 def delete_user_by_username(username: str) -> User:
     user = users[username]
-    if (user != None):# and (user.password == password):
+    if (user != None):
         del_user = users.pop(username)
         return del_user
     else:

@@ -17,7 +17,7 @@
         await createUser(username.value, first_name.value, last_name.value, phone_number.value, password1.value)
         router.push("/")
         } else {
-            console.log("invalid form data")
+            window.alert("Enter a value for each field. Make sure passwords match")
         }
     }
 </script>
