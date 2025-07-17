@@ -7,7 +7,7 @@
         usersData: Object,
         isEditing: Boolean
     })
-    // defineEmits(['update:first_name', 'update:last_name', 'update:phone_number']) // This exports updated value when event take place
+    const emit = defineEmits(['update:isEditing']) // This exports updated value when event take place
 
     const first_name = ref('')
     const last_name = ref('')
@@ -33,6 +33,8 @@
             last_name.value,
             phone_number.value
         )
+        emit('update:isEditing', false)
+        window.location.reload()
     }
 
 </script>

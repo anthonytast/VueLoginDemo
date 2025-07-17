@@ -38,6 +38,7 @@ export const patchUsersData = async (username, first_name, last_name, phone_numb
         // should add an additional verification here maybe
         // can change later where username isn't a param
         const response = await api.patch(`/users/${username}`,{
+            username,
             first_name,
             last_name,
             phone_number

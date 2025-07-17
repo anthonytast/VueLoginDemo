@@ -106,24 +106,24 @@ def create_user(username: str, first_name: str, last_name: str, phone_number: st
 
 
 @router.patch("/{username}", response_model=User)
-def patch_user_by_username(username: str, first_name: str, last_name: str, phone_number: str) -> User:
-    user = users[username]
+def patch_user_by_username(updatedUser: User) -> User:
+    user = users[updatedUser.username]
     if user != None:
-        user.first_name = first_name
-        user.last_name = last_name
-        user.phone_number = phone_number
+        user.first_name = updatedUser.first_name
+        user.last_name = updatedUser.last_name
+        user.phone_number = updatedUser.phone_number
         return user
     else:
         raise HTTPException(status_code=404, detail=f"User {username} not found")
 
 
-@router.patch("/{username}")
-def update_username_password(username: str, password: str, new_password: str):
-    user = users[username]
-    if (user != None) and (user.password == password):
-        user.password = new_password
-    else:
-        raise HTTPException(status_code=401, detail=f"Incorrect username and password")
+# @router.patch("/{username}")
+# def update_username_password(username: str, password: str, new_password: str):
+#     user = users[username]
+#     if (user != None) and (user.password == password):
+#         user.password = new_password
+#     else:
+#         raise HTTPException(status_code=401, detail=f"Incorrect username and password")
 
 
 @router.patch("/{username}")
