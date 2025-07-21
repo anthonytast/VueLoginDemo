@@ -1,6 +1,6 @@
 import api from './api.js';
 import qs from 'qs';
-import { useLoginStore } from '@/stores/auth'
+// import { useLogin } from '@/composables/auth'
 
 export const login = async (username, password) => {
     try {
@@ -14,8 +14,8 @@ export const login = async (username, password) => {
         localStorage.setItem("token", access_token);
         localStorage.setItem("username", username);
 
-        const authStore = useLoginStore();
-        authStore.successfulLogin(username);
+        // const { successfulLogin } = useLogin();
+        // successfulLogin(username);
 
         return true;
     } catch (error) {
@@ -24,7 +24,7 @@ export const login = async (username, password) => {
     }
 }
 
-export const getUsersData = async () => {
+export const getUser = async () => {
     try {
         const response = await api.get('/users/verify');
         return response.data;

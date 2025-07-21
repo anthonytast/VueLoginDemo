@@ -1,24 +1,21 @@
 <script setup>
     import {ref, onMounted} from 'vue';
-    import { getUsersData } from '@/controllers/usersController'
+    import { getUser } from '@/controllers/usersController'
     import { deleteUser } from '@/controllers/usersController'
-    import { useLoginStore } from '@/stores/auth'
-    import { storeToRefs } from 'pinia'
+    import { useLogin } from '@/composables/auth'
     import PatchableText from '@/components/PatchableText.vue';
     import FormButton from '@/components/FormButton.vue'
     import router from '@/router';
     const usersData = ref(null)
 
-    const auth = useLoginStore()
-    const { username, login } = storeToRefs(auth)
-
+    const { username, logoutUser } = useLogin()
     // console.log('username on users page: ', route.query)
     console.log('usersData:', usersData)
 
     const logout = () => {
         localStorage.removeItem('token')
         localStorage.removeItem('username')
-        auth.logoutUser()
+        logoutUser()
         router.push("/")
     }
 
@@ -26,7 +23,7 @@
         localStorage.removeItem('token')
         localStorage.removeItem('username')
 
-        auth.logoutUser()
+        logoutUser()
         await deleteUser(un)
 
         router.push("/")
@@ -36,7 +33,7 @@
     const isEditing = ref(false)
 
     onMounted(async () => {
-        usersData.value = await getUsersData(username.value);
+        usersData.value = await getUser(username.value);
         isWaiting.value = false
         console.log('usersData:', usersData.value);
     });
@@ -45,24 +42,19 @@
 
 <!-- NEXT STEPS IS TO TAKE INTO ACCOUNT SECURITY ASPECTS -->
 <template>
-    <template v-if="login">
-        <template v-if="!isWaiting">
-        <!-- <template v-if="username && isLoggedIn"> -->
-            <h1>{{ username }}</h1>
-            <br>
-            <PatchableText :usersData="usersData" v-bind:isEditing="isEditing"/>
-            <br>
-            <div class="card-actions">
-                <FormButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>
-                <FormButton :button_func = "() => logout()" :text="'Logout'"/>
-                <FormButton :button_func = "() => del(username)" :text="'Delete User'"/>
-            </div>
-        </template>
-        <template v-else>
-            <h1>Loading User...</h1>
-        </template>
+    <template v-if="!isWaiting">
+    <!-- <template v-if="username && isLoggedIn"> -->
+        <h1>{{ username }}</h1>
+        <br>
+        <PatchableText :usersData="usersData" v-bind:isEditing="isEditing"/>
+        <br>
+        <div class="card-actions">
+            <FormButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>
+            <FormButton :button_func = "() => logout()" :text="'Logout'"/>
+            <FormButton :button_func = "() => del(username)" :text="'Delete User'"/>
+        </div>
     </template>
     <template v-else>
-        <p>No User Found!</p>
+        <h1>Loading User...</h1>
     </template>
 </template>

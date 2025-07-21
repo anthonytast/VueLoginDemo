@@ -3,8 +3,8 @@ import { createWebHistory, createRouter } from 'vue-router'
 import Login  from './pages/Login.vue';
 import UserInfo from './pages/UserInfo.vue';
 import CreateUser from './pages/CreateUser.vue';
-import { getUsersData } from '@/controllers/usersController'
-import { useLoginStore } from '@/stores/auth'
+import { getUser } from '@/controllers/usersController'
+import { useLogin } from '@/composables/auth'
 
 const routes = [
   { path: '/', component: Login, meta: { requiresAuth: false }  },
@@ -17,6 +17,7 @@ const router = createRouter({
   routes,
 })
 
+// const { successfulLogin } = useLogin()
 
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
@@ -28,14 +29,13 @@ router.beforeEach(async (to, from, next) => {
     return next('/')
   }
 
-  const user = await getUsersData()
+  const user = await getUser() // getUser verifies token
   if (!user) {
     localStorage.clear()
     return next('/')
   }
 
-  const authStore = useLoginStore()
-  authStore.successfulLogin(user.username)
+  // successfulLogin(user.username)
   return next()
 })
 
