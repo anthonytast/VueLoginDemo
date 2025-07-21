@@ -1,10 +1,11 @@
 import api from './api.js';
+import qs from 'qs';
 import { useLoginStore } from '@/stores/auth'
 
 export const login = async (username, password) => {
     try {
-        const response = await api.post('/users/token', null, {
-            params: { username, password }
+        const response = await api.post('/users/token', qs.stringify({ username, password }), {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         });
 
         const { access_token } = response.data;
