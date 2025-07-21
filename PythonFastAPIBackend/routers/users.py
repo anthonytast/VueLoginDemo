@@ -1,29 +1,30 @@
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from database.user_storage import users, UserDB
+from database.user_storage import users
+from typing import Annotated
 
 router = APIRouter(
     prefix = '/users',
     tags = ['users']
 )
 
-SECRET_KEY = "my-secret-jwt-key"
+#These would be moved to .env in production
+SECRET_KEY = "my-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
 
-# can add password hashing later
+'''
+Can add get database here
+'''
 
 class User(BaseModel):
-    username: str
-    first_name: str
-    last_name: str
-    phone_number: str
-
-class UserCreate(BaseModel):
     username: str
     first_name: str
     last_name: str
@@ -34,9 +35,12 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-def create_access_token(data: dict, expires_delta: timedelta = None):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+
+### HELPER FUNCTIONS
+
+def create_access_token(username: str, expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+    to_encode = {'sub': username}
+    expire = datetime.utcnow() + (expires_delta)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -50,26 +54,29 @@ def verify_token(token: str):
     except JWTError:
         return None
 
+def authenticate_user(username: str, password: str):
+    user = users.get(username)
+    if not user: # user is None
+        return False
+    if not bcrypt_context.verify(password, user.password):
+        return False
+    return user
+
+
+### ENDPOINTS
 
 @router.get("/")
-def get_all_users(limit: int = 25): # Using the BaseModel class so password doesn't show
-    filtered_users = [
-        {
-            "username": user.username,
-            "first_name": user.first_name
-        }
-        for _, user in list(users.items())[:limit]
-    ]
-    return filtered_users
+def get_all_users(limit: int = 25):
+    return list(users.values())[:limit]
 
 
 @router.post("/token", response_model=Token)
-def jwt_token_from_successful_login(username: str, password: str):
-    user = users.get(username)
-    if not user or user.password != password:
+def jwt_from_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token({"sub": username})
+    token = create_access_token(user.username)
     return {"access_token": token, "token_type": "bearer"}
 
 
@@ -78,23 +85,17 @@ def verify_user(token: str = Depends(oauth2_scheme)):
     user = verify_token(token)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
-    return User(**user.__dict__)
+    return user
 
 
 @router.post("/")
-def create_user(user: UserCreate):
-    if user.username not in users:
-        new_user = UserDB(
-                username=user.username,
-                first_name=user.first_name,
-                last_name=user.last_name,
-                phone_number=user.phone_number,
-                password=user.password
-            )
-        users[user.username] = new_user
-        return {user.username: new_user}
+def create_user(new_user: User):
+    if new_user.username not in users:
+        new_user.password = bcrypt_context.hash(new_user.password)
+        users[new_user.username] = new_user
+        return new_user
     else:
-        raise HTTPException(status_code=400, detail=f"Username {user.username} is taken")
+        raise HTTPException(status_code=400, detail=f"Username {new_user.username} is taken")
 
 
 @router.patch("/{username}", response_model=User)
