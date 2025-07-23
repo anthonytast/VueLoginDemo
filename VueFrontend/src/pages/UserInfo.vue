@@ -20,12 +20,11 @@
     }
 
     const del = async (un) => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('username')
-
-        logoutUser()
         await deleteUser(un)
 
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
+        logoutUser()
         router.push("/")
     }
 

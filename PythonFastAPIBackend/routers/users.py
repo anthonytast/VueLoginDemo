@@ -31,6 +31,11 @@ class User(BaseModel):
     phone_number: str
     password: str
 
+class UserUpdate(BaseModel):
+    first_name: str
+    last_name: str
+    phone_number: str
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -99,8 +104,8 @@ def create_user(new_user: User):
 
 
 @router.patch("/{username}", response_model=User)
-def patch_user_by_username(updatedUser: User) -> User:
-    user = users[updatedUser.username]
+def patch_user_by_username(updatedUser: UserUpdate, token: str = Depends(oauth2_scheme)) -> User:
+    user = verify_token(token)
     if user != None:
         user.first_name = updatedUser.first_name
         user.last_name = updatedUser.last_name
@@ -111,9 +116,9 @@ def patch_user_by_username(updatedUser: User) -> User:
 
 
 @router.delete("/{username}", response_model=User)
-def delete_user_by_username(username: str) -> User:
-    user = users[username]
-    if (user != None):
+def delete_user_by_username(username: str, token: str = Depends(oauth2_scheme)) -> User:
+    user = verify_token(token)
+    if (user != None) and (user == users[username]):
         del_user = users.pop(username)
         return del_user
     else:

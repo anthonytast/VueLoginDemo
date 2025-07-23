@@ -17,7 +17,6 @@ const router = createRouter({
   routes,
 })
 
-// const { successfulLogin } = useLogin()
 
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
@@ -35,7 +34,6 @@ router.beforeEach(async (to, from, next) => {
     return next('/')
   }
 
-  // successfulLogin(user.username)
   return next()
 })
 

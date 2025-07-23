@@ -34,7 +34,7 @@
             phone_number.value
         )
         emit('update:isEditing', false)
-        // window.location.reload()
+        window.location.reload()
     }
 
 </script>
