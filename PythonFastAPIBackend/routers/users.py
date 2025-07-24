@@ -12,7 +12,6 @@ router = APIRouter(
     tags = ['users']
 )
 
-users = None
 #These would be moved to .env in production
 SECRET_KEY = "my-secret-key"
 ALGORITHM = "HS256"
@@ -20,10 +19,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
-
-'''
-Can add get database here
-'''
 
 class User(BaseModel):
     username: str
@@ -42,7 +37,19 @@ class Token(BaseModel):
     token_type: str
 
 
-### HELPER FUNCTIONS
+# # #  HELPER FUNCTIONS  # # #
+
+def get_user_by_username(username: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+    if user != None:
+        return dict(user)
+    else:
+        return None
 
 def create_access_token(username: str, expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
     to_encode = {'sub': username}
@@ -54,22 +61,90 @@ def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
-        if username is None or username not in users:
+        if username is None:
             return None
-        return users[username]
+        return get_user_by_username(username)
     except JWTError:
         return None
 
 def authenticate_user(username: str, password: str):
-    user = users.get(username)
+    user = get_user_by_username(username)
     if not user: # user is None
         return False
-    if not bcrypt_context.verify(password, user.password):
+    if not bcrypt_context.verify(password, user['password']):
         return False
     return user
 
+def get_all_usernames():
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-### ENDPOINTS
+    cursor.execute("SELECT username FROM users")
+    rows = cursor.fetchall()
+    conn.close()
+
+    # Extract usernames from rows
+    usernames = [row["username"] for row in rows]
+    return list(usernames)
+
+def insert_user(user: User):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT 1 FROM users WHERE username = ?", (user.username,))
+    if cursor.fetchone():
+        conn.close()
+        return False
+
+    hashed_password = bcrypt_context.hash(user.password)
+
+    cursor.execute('''
+        INSERT INTO users (username, first_name, last_name, phone_number, password)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (
+        user.username,
+        user.first_name,
+        user.last_name,
+        user.phone_number,
+        hashed_password
+    ))
+
+    conn.commit()
+    conn.close()
+    return True
+
+def patch_user(username: str, updates: UserUpdate):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    sql = '''
+        UPDATE users
+        SET first_name = ?,
+            last_name = ?,
+            phone_number = ?
+        WHERE username = ?
+    '''
+
+    cursor.execute(sql, (
+        updates.first_name,
+        updates.last_name,
+        updates.phone_number,
+        username
+    ))
+
+    conn.commit()
+    conn.close()
+
+def delete_user(username: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM users WHERE username = ?", (username,))
+
+    conn.commit()
+    conn.close()
+
+# # #  ENDPOINTS  # # #
 
 @router.get("/")
 def get_all_users(limit: int = 25):
@@ -91,7 +166,7 @@ def jwt_from_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token(user.username)
+    token = create_access_token(user['username'])
     return {"access_token": token, "token_type": "bearer"}
 
 
@@ -105,22 +180,20 @@ def verify_user(token: str = Depends(oauth2_scheme)):
 
 @router.post("/", response_model=User)
 def create_user(new_user: User):
-    if new_user.username not in users:
+    if new_user.username not in get_all_usernames():
         new_user.password = bcrypt_context.hash(new_user.password)
-        users[new_user.username] = new_user
-        return new_user
-    else:
-        raise HTTPException(status_code=400, detail=f"Username {new_user.username} is taken")
+        if insert_user(new_user):
+            return new_user
+    
+    raise HTTPException(status_code=400, detail=f"Username '{new_user.username}' is taken")
 
 
 @router.patch("/{username}", response_model=User)
-def patch_user_by_username(updatedUser: UserUpdate, token: str = Depends(oauth2_scheme)) -> User:
+def patch_user_by_username(username: str, updatedUser: UserUpdate, token: str = Depends(oauth2_scheme)) -> User:
     user = verify_token(token)
-    if user != None:
-        user.first_name = updatedUser.first_name
-        user.last_name = updatedUser.last_name
-        user.phone_number = updatedUser.phone_number
-        return user
+    if username in get_all_usernames() and username == user.get('username'):
+        patch_user(username, updatedUser)
+        return get_user_by_username(username)
     else:
         raise HTTPException(status_code=404, detail=f"User {updatedUser.username} not found")
 
@@ -128,9 +201,9 @@ def patch_user_by_username(updatedUser: UserUpdate, token: str = Depends(oauth2_
 @router.delete("/{username}", response_model=User)
 def delete_user_by_username(username: str, token: str = Depends(oauth2_scheme)) -> User:
     user = verify_token(token)
-    if (user != None) and (user == users[username]):
-        del_user = users.pop(username)
-        return del_user
+    if (user != None) and (username == user['username']):
+        delete_user(username)
+        return user
     else:
         raise HTTPException(status_code=401, detail=f"Incorrect username and password")
 

@@ -40,6 +40,10 @@ export const patchUsersData = async (username, first_name, last_name, phone_numb
             first_name,
             last_name,
             phone_number
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
         return response.data;
     } catch (error) {
@@ -50,7 +54,11 @@ export const patchUsersData = async (username, first_name, last_name, phone_numb
 
 export const deleteUser = async (username) => {
     try {
-        const response = await api.delete(`/users/${username}`, {username});
+        const response = await api.delete(`/users/${username}`, {username}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error("Token invalid or expired", error);
