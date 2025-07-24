@@ -1,10 +1,10 @@
-from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from database.user_storage import users
+from PythonFastAPIBackend.database.users_db_init import get_db_connection
 from typing import Annotated
 
 router = APIRouter(
@@ -93,7 +93,7 @@ def verify_user(token: str = Depends(oauth2_scheme)):
     return user
 
 
-@router.post("/")
+@router.post("/", response_model=User)
 def create_user(new_user: User):
     if new_user.username not in users:
         new_user.password = bcrypt_context.hash(new_user.password)
