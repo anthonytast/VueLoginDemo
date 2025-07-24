@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from PythonFastAPIBackend.database.users_db_init import get_db_connection
+from database.users_db_init import get_db_connection
 from typing import Annotated
 
 router = APIRouter(
@@ -12,6 +12,7 @@ router = APIRouter(
     tags = ['users']
 )
 
+users = None
 #These would be moved to .env in production
 SECRET_KEY = "my-secret-key"
 ALGORITHM = "HS256"
@@ -72,7 +73,16 @@ def authenticate_user(username: str, password: str):
 
 @router.get("/")
 def get_all_users(limit: int = 25):
-    return list(users.values())[:limit]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT * FROM users LIMIT ?', (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    # Convert rows to dicts
+    users = [dict(row) for row in rows]
+    return users
 
 
 @router.post("/token", response_model=Token)
