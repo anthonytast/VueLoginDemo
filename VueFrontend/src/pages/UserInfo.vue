@@ -6,7 +6,12 @@
     import PatchableText from '@/components/PatchableText.vue';
     import FormButton from '@/components/FormButton.vue'
     import router from '@/router';
-    const usersData = ref(null)
+    const usersData = ref(null) 
+    // const userData = ref( {
+    //username: null,
+    //first_name:null,
+    //last_name:null,
+    //phone_number: null})
 
     const { username, logoutUser } = useLogin()
     // console.log('username on users page: ', route.query)
@@ -36,7 +41,13 @@
         isWaiting.value = false
         console.log('usersData:', usersData.value);
     });
-
+    //use that to update the data and mutate the DOM
+const editFinished = () => {
+    isEditing.value = !isEditing
+    //use  the payload of the event here
+    //userData.value = ????
+    console.log('')
+}
 </script>
 
 <!-- NEXT STEPS IS TO TAKE INTO ACCOUNT SECURITY ASPECTS -->
@@ -45,7 +56,7 @@
     <!-- <template v-if="username && isLoggedIn"> -->
         <h1>{{ username }}</h1>
         <br>
-        <PatchableText :usersData="usersData" v-bind:isEditing="isEditing"/>
+        <PatchableText :usersData="usersData" v-bind:isEditing="isEditing" />
         <br>
         <div class="card-actions">
             <FormButton :button_func = "() => isEditing = !isEditing" :text="'Edit'"/>

@@ -9,11 +9,15 @@
     })
     const emit = defineEmits(['update:isEditing']) // This exports updated value when event take place
 
-    const first_name = ref('')
+    const first_name = ref(props.usersData.first_name)
     const last_name = ref('')
     const phone_number = ref('')
 
     // 🔁 Watch for when usersData becomes available and update local refs
+    //onMounted(()=> {
+    //first_name.value = props.userData.first_name})
+
+
     watch(
     () => props.usersData,
     (newVal) => {
@@ -34,6 +38,7 @@
             phone_number.value
         )
         emit('update:isEditing', false)
+        
         window.location.reload()
     }
 
