@@ -1,29 +1,28 @@
-# login-page
+# Full Stack Login Project
 
-This template should help get you started developing with Vue 3 in Vite.
+## Description
+This is a sample full stack application I built in Vue.js. This starter project is designed to understand the core concepts of full stack within a node.js application.
 
-## Recommended IDE Setup
+It encorporates a multitude of Vue's key features, while using a FastAPI with user endpoints for login. HTTP Get, Post, Patch, and Delete methods are utelized by the variety of basic user functions.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## FastAPI Python Directory
+Run the following commands at the FastAPI Directory
 
-## Customize configuration
+```sh
+uvicorn main:app --reload 
+```
+*NOTE: The `--reload` flag will cause the application to reload every time the save is made within the directory*
+This will run on localhost port 80 (unless otherwise specified)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## Vue Page
 
-## Project Setup
+Run the following commands at the Vue Directory
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
 ```sh
 npm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+This will run on localhost port 5173 (unless otherwise specified)
