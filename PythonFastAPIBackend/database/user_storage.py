@@ -17,13 +17,6 @@ class UserDB():
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 users = {
-    "anthonytast": UserDB(
-        username="anthonytast",
-        first_name="Anthony",
-        last_name="Tast",
-        phone_number="631-925-7508",
-        password=bcrypt_context.hash("SuperSecretPW")
-    ),
     "testuser": UserDB(
         username="testuser",
         first_name="Dev",
