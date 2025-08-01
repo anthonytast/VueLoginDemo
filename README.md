@@ -14,7 +14,7 @@ uvicorn main:app --reload
 *NOTE: The `--reload` flag will cause the application to reload every time the save is made within the directory*
 This will run on localhost port 80 (unless otherwise specified)
 
-## Vue Page
+## Vue.js Directory
 
 Run the following commands at the Vue Directory
 
