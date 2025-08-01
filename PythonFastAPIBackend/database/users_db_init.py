@@ -30,11 +30,11 @@ def init_db():
             INSERT INTO users (username, first_name, last_name, phone_number, password)
             VALUES (?, ?, ?, ?, ?)
         ''', (
-            'anthonytast',
-            'Anthony',
-            'Tast',
-            '631-925-7508',
-            bcrypt_context.hash('SuperSecretPW')
+            'testuser',
+            'Dev',
+            'Test',
+            '1-800',
+            bcrypt_context.hash('test')
         ))
 
     conn.commit()
